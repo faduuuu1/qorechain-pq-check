@@ -142,6 +142,44 @@ this account walked through all three verdicts as it was set up:
 no-pqc-key  ->  no-window  ->  ready
 ```
 
+## On-chain: the PQC gate
+
+`contracts/PqcGate.sol` is the on-chain half of the same question. The checker
+asks, off chain, whether an account's next EVM transaction would be admitted;
+the gate refuses, on chain, to record anything for an account with no registered
+ML-DSA-87 key. Both read the same precompile at `0x…0a02`, so the two cannot
+disagree.
+
+```bash
+npm run compile -- PqcGate   # solc 0.8.24 -> contracts/PqcGate.artifact.ts
+npm run deploy:gate          # deploy, read the precompile, pass the gate
+```
+
+`deploy:gate` needs the same live EVM window a normal deploy does
+(`npm run window open`). It prints the deployment transaction hash at the end.
+
+## Native lane: swap and encryption key
+
+Two native-lane scripts, both hybrid-signed. Neither needs an EVM window:
+windows govern the EVM lane only.
+
+```bash
+npm run swap -- --dry   # quote a swap from live reserves, broadcast nothing
+npm run swap            # swap a small amount in the deepest pool you can trade
+npm run kem status      # the ML-KEM-1024 key the chain holds for this account
+npm run kem register    # derive it and publish the public half
+```
+
+`swap` computes `minOut` from the pool's live reserves with a 1% tolerance
+(`QORE_SLIPPAGE_BPS`) rather than leaving the floor at zero, which on a thin
+pool is how a testnet balance disappears.
+
+`kem` **derives** the ML-KEM-1024 keypair from the account's own secret through
+SHAKE-256 under a fixed domain, so the secret half can always be recomputed from
+the mnemonic. A random keypair would have to be stored somewhere, and a
+published encryption key whose secret half is lost is worse than none: senders
+keep encrypting to it and nobody can read the result.
+
 ## Credits
 
 Built with the QoreChain kits and templates, as the fest rules allow:
@@ -157,12 +195,18 @@ Built with the QoreChain kits and templates, as the fest rules allow:
   `fetchPqcStatus`.
 - [`@qorechain/evm`](https://www.npmjs.com/package/@qorechain/evm) 0.14.0 —
   `evmWindowStatus`, `toQorAddress`, `toEvmAddress`, and the EVM client helpers.
+- [`@qorechain/pqc`](https://www.npmjs.com/package/@qorechain/pqc) 0.2.3 —
+  `mlkem1024` and `shake256`, for the derived encryption keypair.
 - [viem](https://viem.sh) — accounts and chain plumbing.
+- [solc-js](https://www.npmjs.com/package/solc) 0.8.24 — the only compiler in
+  the repo; there is no hardhat or foundry toolchain.
 - [tsx](https://tsx.is) and TypeScript 5, on Node.js 24.
 
 Original to this project: `scripts/check.ts`, `src/readiness.ts`,
 `test/readiness.test.ts`, `balance.mjs`, the mnemonic-signing path added to
-`scripts/deploy.ts`, this README and `AI_USAGE.md`.
+`scripts/deploy.ts`, `contracts/PqcGate.sol`, `scripts/compile.mjs`,
+`scripts/deploy-gate.ts`, `scripts/swap.ts`, `scripts/kem.ts`,
+`src/native.ts`, this README and `AI_USAGE.md`.
 
 ## Licence
 
