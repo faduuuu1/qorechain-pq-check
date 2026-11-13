@@ -80,8 +80,10 @@ the same 20 bytes - so the tool converts it with `toQorAddress` and prints both.
 
 - `npm run window status | register | open | recovery-code` - inspect and open
   the account's EVM authorisation window. Needs credentials.
-- `npm run deploy` - deploy the `Counter` contract. Needs a funded account and
-  a live window.
+- `npm run deploy` - deploy the `Counter` contract. Signs with `QORE_MNEMONIC`
+  when set, falling back to `QORE_EVM_PRIVATE_KEY`, so it is always the same
+  account `window` opened the window for. Needs a funded account and a live
+  window.
 
 ## Tests
 
