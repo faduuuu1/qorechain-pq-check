@@ -35,6 +35,10 @@ prompt.
   authorisation window
 - the `.gitignore` the template ships without - the scaffolded `.env` holds a
   placeholder private key and would otherwise have been committable
+- `src/readiness.ts` - the pure logic extracted from the script so it could
+  be tested at all; `scripts/check.ts` was rewritten to import it
+- `test/readiness.test.ts` - 14 cases on Node 24’s built-in runner, no new
+  dependency
 - this file and `README.md`
 
 ## What the AI got wrong

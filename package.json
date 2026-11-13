@@ -8,7 +8,8 @@
     "deploy": "tsx --env-file=.env scripts/deploy.ts",
     "typecheck": "tsc --noEmit",
     "window": "tsx --env-file=.env scripts/window.ts",
-    "check": "tsx --env-file=.env scripts/check.ts"
+    "check": "tsx --env-file=.env scripts/check.ts",
+    "test": "tsx --test test/*.test.ts"
   },
   "dependencies": {
     "@cosmjs/stargate": "^0.39.0",

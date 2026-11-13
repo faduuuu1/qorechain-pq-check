@@ -9,9 +9,18 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": true,
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "noEmit": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["scripts", "contracts"]
+  "include": [
+    "scripts",
+    "contracts",
+    "src",
+    "test"
+  ]
 }

@@ -83,6 +83,28 @@ the same 20 bytes - so the tool converts it with `toQorAddress` and prints both.
 - `npm run deploy` - deploy the `Counter` contract. Needs a funded account and
   a live window.
 
+## Tests
+
+```sh
+npm test        # 14 tests, no network
+npm run typecheck
+```
+
+The verdict logic and address handling live in `src/readiness.ts`, apart from
+the script, so they can be tested without touching the chain. The suite uses
+Node 24's built-in runner and adds no dependency.
+
+It covers both address directions and the round trip, checksummed input, uqor
+formatting down to the smallest unit, and every verdict state. Three cases
+exist for the rule the design rests on: an unreadable PQC status is `unknown`
+and never `blocked`, an unreadable window status is `unknown` and not
+`no-window`, and a key that is *readably* absent still reports `blocked` -
+the distinction applies to unreadable answers, not to a clear no.
+
+One ordering case is deliberate: a missing key outranks a present window,
+because a window cannot exist without a key, so the key is the fact worth
+acting on.
+
 ## Built with
 
 - [`create-qorechain-dapp`](https://www.npmjs.com/package/create-qorechain-dapp) 0.14.0, `evm-solidity` template, testnet preset
