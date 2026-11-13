@@ -53,14 +53,31 @@ async function caption(title: string, ...lines: string[]): Promise<void> {
   if (!FAST) await sleep(PAUSE);
 }
 
+/**
+ * npm prints two "npm notice run …" lines before every script, and the second
+ * one echoes the whole resolved command - long enough here to run off the right
+ * edge of the terminal and wrap. On screen that is four lines of noise before
+ * any real output, every single time.
+ *
+ * `--silent` removes npm's own chatter and nothing else: the script's output is
+ * byte for byte the same. The caption still shows the plain command, because
+ * that is what a viewer would type.
+ */
+function quiet(cmd: string): string {
+  if (cmd.startsWith("npm run ")) return cmd.replace("npm run ", "npm run --silent ");
+  if (cmd.startsWith("npm test")) return cmd.replace("npm test", "npm test --silent");
+  return cmd;
+}
+
 function run(cmd: string): void {
   console.log(`${GREEN}$ ${cmd}${R}\n`);
+  const exec = quiet(cmd);
   try {
     // No `shell` option: execSync uses the platform default, which is what
     // resolves npm to npm.cmd on Windows. Passing shell:"true" looks harmless
     // and is not - it is read as a path to a shell binary, the spawn fails, and
     // the catch below hides it, so the demo plays with every command silent.
-    execSync(cmd, { stdio: "inherit" });
+    execSync(exec, { stdio: "inherit" });
   } catch (err) {
     // A non-zero exit is still worth seeing on screen - the output above says
     // why - but a command that never ran at all must not pass unnoticed.
