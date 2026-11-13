@@ -15,7 +15,8 @@
     "compile": "node scripts/compile.mjs",
     "deploy:gate": "tsx --env-file=.env scripts/deploy-gate.ts",
     "swap": "tsx --env-file=.env scripts/swap.ts",
-    "kem": "tsx --env-file=.env scripts/kem.ts"
+    "kem": "tsx --env-file=.env scripts/kem.ts",
+    "demo": "tsx scripts/demo.ts"
   },
   "dependencies": {
     "@cosmjs/stargate": "^0.39.0",

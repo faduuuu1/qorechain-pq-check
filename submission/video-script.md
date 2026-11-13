@@ -1,108 +1,101 @@
-# Video script — 2:40, under the 3:00 limit
+# The submission video
 
-Screen recording of a terminal, plus the editor for two short moments. No face
-needed. Record at 1080p; keep the terminal font large enough to read.
+The fest asks for "a video of up to 3 minutes **showing the project working**".
+A demo, not a pitch. No slides, no face needed.
 
-The fest asks for "a video of up to 3 minutes **showing the project working**",
-so this is a demo, not a pitch. No slides, no intro card beyond a title.
-
-**Before you record:** have a second throwaway testnet account with no PQC key,
-so you can show the `no-pqc-key` state live instead of describing it. The
-checker reads it fine at zero balance, so it does not need funding.
-
-**Blank the mnemonic.** If `.env` is ever on screen, that line must be cropped,
-blurred or replaced. Easiest: open a copy with the value removed.
+There is a one-command way to record it and a narrated way. Both are below.
 
 ---
 
-### 0:00 — 0:20 · The problem
+## The fast path — one command, ~88 seconds
 
-> On QoreChain, an EVM transaction needs two separate things. A registered
-> ML-DSA-87 key for the account, and a live authorisation window opened by a
-> hybrid-signed message. They fail independently — and from the EVM side, all
-> of those failures look the same. A revert, with nothing useful in it.
+`npm run demo` plays the whole walkthrough on its own: captions on screen
+between sections, real commands running live, paced for a recording. Timed at
+**88 seconds**, against a 180-second limit.
 
-**Show:** the README title, or the "Why this is worth a tool" section.
+Everything it runs is read-only. Nothing is signed, nothing is broadcast, no
+window is consumed, and `.env` is never printed — so you can re-record as many
+times as you like.
 
-### 0:20 — 0:45 · One command, one answer
+### OBS, once
 
-**Run:** `npm run check -- <the fresh account>`
+1. **Sources** → `+` → **Display Capture** (simplest) or **Window Capture** and
+   pick the terminal. Display Capture avoids the trap where switching windows
+   leaves a black rectangle.
+2. **Settings → Output → Recording Quality:** *High Quality, Medium File Size*.
+   **Format:** `mp4`.
+3. **Settings → Video → Base and Output Resolution:** `1920x1080`. **FPS:** 30.
+   Terminal text is static; 60fps just doubles the file for nothing.
+4. **Audio:** if you are not narrating, mute the mic in the Audio Mixer so the
+   recording has no room hiss. If you are, speak from the script below.
 
-> No post-quantum key. That's the first of three ways this fails, and the tool
-> names it — and prints the command that fixes that specific one.
+### Then
 
-### 0:45 — 1:10 · The second state
+```bash
+# optional: makes section 2 show the "ready" verdict instead of "exhausted"
+npm run window open
 
-**Run:** `npm run check -- qor1ketzqqfqda7weuz2aj84fapgcjurqer6k0stcg`
-(before opening a window, or play a recording of it)
+# make the terminal font large — Ctrl+Shift+Plus a few times — then:
+npm run demo
+```
 
-> Same command, different account. The key is registered, so the first problem
-> is gone — and a second one appears. No window. Different cause, different
-> remedy.
+Start recording, run it, stop when the last caption clears. Trim the first and
+last second in OBS or any editor.
 
-### 1:10 — 1:35 · Fixing it live
+**Pacing:** `QORE_DEMO_PAUSE=6 npm run demo` holds each caption longer if 88
+seconds feels rushed. `npm run demo -- --fast` skips every pause, for
+rehearsing.
 
-**Run:** `npm run window open`
+### Upload
 
-> This is the hybrid-signed transaction: secp256k1 and ML-DSA-87 together, on
-> the native lane.
-
-**Run:** `npm run check -- qor1ketz…`
-
-> Ready. Same command, three runs, three different answers.
-
-### 1:35 — 2:05 · The same question, on chain
-
-**Run:** `npm run deploy:gate`
-
-> The checker answers that question off chain. PqcGate enforces it on chain. It
-> reads the same key-status precompile, and refuses to record anything for an
-> account with no registered ML-DSA-87 key.
->
-> Watch the constructor: it reads the precompile during deployment, so the gate
-> permanently records whether its own deployer was quantum-safe. Algorithm 1,
-> 2592 bytes — ML-DSA-87 at its FIPS 204 length.
-
-**Show:** the `keyStatus` output and the `attest` call going through.
-
-### 2:05 — 2:25 · It is reads only, and it refuses to guess
-
-**Show:** `src/readiness.ts`, the `verdictFor` doc comment.
-
-> The checker needs no private key, no gas and no funded account — it reads two
-> REST endpoints, so you can point it at any address, including one you do not
-> control.
->
-> And `fetchPqcStatus` throws when the chain's answer can't be read, rather
-> than saying "not registered". The tool keeps that distinction: unreadable
-> prints UNKNOWN, counted apart from blocked. Calling an account
-> quantum-unsafe because of a network blip would be worse than saying nothing.
-
-**Run:** `npm test`
-
-> Fourteen tests, three of them on exactly that rule.
-
-### 2:25 — 2:40 · Close
-
-> Also on the native lane: a swap that computes its minimum output from live
-> reserves, and an ML-KEM-1024 encryption key derived from the account's own
-> secret, so it can always be recomputed rather than stored.
->
-> qorechain-pq-check. Repo's in the description, MIT licensed.
+YouTube **Unlisted**, Vimeo or Loom. Paste the link into the Video field on
+the project page. Unlisted is enough; it does not need to be public.
 
 ---
 
-## If you need a shorter cut
+## If you would rather narrate it
 
-Drop sections 1:35–2:05 and 2:25–2:40 and the demo still stands on its own at
-about **1:50**: problem, three states, the fix, the UNKNOWN rule, tests.
+Same five beats, with words. Run the commands yourself and talk over them.
 
-## Recording notes
+**0:00 — The problem.** On QoreChain an EVM transaction needs two separate
+things: a registered ML-DSA-87 key, and a live authorisation window opened by a
+hybrid-signed message. They fail independently — and from the EVM side all of
+those failures look the same. A revert, with nothing useful in it.
 
-- Clear the terminal between sections so output does not scroll off.
-- `npm run check` takes a second or two — cut the dead air.
-- `npm run deploy:gate` needs a live window. Run `npm run window open` first,
-  or the deploy is refused.
-- Upload to YouTube **unlisted**, Vimeo or Loom, and paste the link in the
-  Video field on the project page. Unlisted is enough; it does not need to be
-  public.
+**0:20 — An account that is not ready.**
+`npm run check -- qor1zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg34kqp8d`
+No post-quantum key. That is the first of three causes, and the tool names it
+and prints the command that fixes that one.
+
+**0:45 — A different account.**
+`npm run check -- qor1ketzqqfqda7weuz2aj84fapgcjurqer6k0stcg`
+The key is registered here, so the first cause is ruled out and a different one
+surfaces — with its own remedy.
+
+**1:10 — The same question, on chain.**
+`node scripts/gate-read.mjs 0x30555caffd74d276ebacff99f5f92991f8404525 qor1ketz…`
+PqcGate reads the same key-status precompile and refuses to record anything for
+an account with no ML-DSA-87 key. Its constructor read the precompile during
+deployment, so it permanently records whether its own deployer was
+quantum-safe. Algorithm 1, 2592 bytes — ML-DSA-87 at its FIPS 204 length.
+
+**1:40 — It refuses to guess.** `npm test`
+`fetchPqcStatus` throws when the chain's answer cannot be read, rather than
+saying "not registered". The tool keeps that distinction: unreadable prints
+UNKNOWN and is counted apart from blocked. Calling an account quantum-unsafe
+because of a network blip would be worse than saying nothing. Fourteen tests,
+three of them on exactly that rule.
+
+**2:05 — Close.** No private key, no gas, no funded account — it reads two REST
+endpoints, so it works against any address, including one you do not control.
+Repo is in the description, MIT licensed.
+
+---
+
+## Two things to get right
+
+- **Blank the mnemonic.** `npm run demo` never prints `.env`, but if you open it
+  on camera for any reason, that line must be cropped, blurred or replaced.
+- **Check the audio before the real take.** Record ten seconds and play it back.
+  Finding out afterwards that the mic was muted is the classic way to lose an
+  evening.

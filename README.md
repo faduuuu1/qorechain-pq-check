@@ -142,6 +142,17 @@ this account walked through all three verdicts as it was set up:
 no-pqc-key  ->  no-window  ->  ready
 ```
 
+## Recording the demo
+
+```bash
+npm run demo            # the whole walkthrough, captioned and paced (~88s)
+npm run demo -- --fast  # no pauses, for rehearsing
+```
+
+Everything it runs is read-only: nothing signed, nothing broadcast, no window
+consumed, and `.env` is never printed. `QORE_DEMO_PAUSE` sets how long each
+caption holds. See [submission/video-script.md](submission/video-script.md).
+
 ## On-chain: the PQC gate
 
 `contracts/PqcGate.sol` is the on-chain half of the same question. The checker
