@@ -107,9 +107,63 @@ One ordering case is deliberate: a missing key outranks a present window,
 because a window cannot exist without a key, so the key is the fact worth
 acting on.
 
-## Built with
+## Deployed on testnet
 
-- [`create-qorechain-dapp`](https://www.npmjs.com/package/create-qorechain-dapp) 0.14.0, `evm-solidity` template, testnet preset
-- `@qorechain/sdk` 0.14.0 - `fetchPqcStatus`
-- `@qorechain/evm` 0.14.0 - `evmWindowStatus`, `toQorAddress`, `toEvmAddress`
-- viem, tsx, TypeScript 5, Node.js 24
+Built for **Build Before Q-Day**, the QoreChain Developer Fest, in the
+**Quantum Pass** category. The account and contract this project uses on
+QoreChain testnet (`qorechain-diana`, EVM chain id 9800):
+
+| | |
+| --- | --- |
+| Account (native) | `qor1ketzqqfqda7weuz2aj84fapgcjurqer6k0stcg` |
+| Account (EVM) | `0xb6562001206F7cECF04aEc8f54F428c4b830647A` |
+| Counter contract | `0xfe890d6599dc38949e3ebb40e06fdacb4f7584c1` |
+
+Proof the account works end to end, all mined with `status: 0x1`:
+
+```
+window open   hybrid-signed, secp256k1 + ML-DSA-87 (native lane)
+              4EF4E503D381D7EB33BEE54EA7B83E9E97077BAEF6398114E925364AA1FE04AD
+
+deploy        block 9988267, gas 138851
+              0xae7e346dfa0e8e123a7f50c9c65548ac408d15c4aa7f533787047ca89593bedc
+
+increment     block 9988268, gas 44587
+              0x7c09eff1b64c89e38fe0d209d45154198a74b04d23aff253b86241104e77afe0
+```
+
+`count()` reads `1` on chain, and the window reports 2 of its 5 transactions
+consumed — the same two writes, seen from the other lane.
+
+Running `npm run check -- qor1ketzqqfqda7weuz2aj84fapgcjurqer6k0stcg` against
+this account walked through all three verdicts as it was set up:
+
+```
+no-pqc-key  ->  no-window  ->  ready
+```
+
+## Credits
+
+Built with the QoreChain kits and templates, as the fest rules allow:
+
+- [`create-qorechain-dapp`](https://www.npmjs.com/package/create-qorechain-dapp)
+  0.14.0 — scaffolded from the `evm-solidity` template with the testnet preset.
+  `contracts/Counter.sol`, `contracts/Counter.artifact.ts` and the original
+  `scripts/deploy.ts` come from that template.
+- `scripts/window.ts` is the window helper from the same tool's `hardhat`
+  template, brought in because the `evm-solidity` template cannot open an EVM
+  authorisation window. It is used essentially unmodified.
+- [`@qorechain/sdk`](https://www.npmjs.com/package/@qorechain/sdk) 0.14.0 —
+  `fetchPqcStatus`.
+- [`@qorechain/evm`](https://www.npmjs.com/package/@qorechain/evm) 0.14.0 —
+  `evmWindowStatus`, `toQorAddress`, `toEvmAddress`, and the EVM client helpers.
+- [viem](https://viem.sh) — accounts and chain plumbing.
+- [tsx](https://tsx.is) and TypeScript 5, on Node.js 24.
+
+Original to this project: `scripts/check.ts`, `src/readiness.ts`,
+`test/readiness.test.ts`, `balance.mjs`, the mnemonic-signing path added to
+`scripts/deploy.ts`, this README and `AI_USAGE.md`.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE).

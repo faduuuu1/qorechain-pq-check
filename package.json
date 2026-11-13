@@ -3,14 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "A QoreChain EVM dApp: a Solidity Counter contract deployed and exercised with viem via @qorechain/evm.",
+  "description": "Post-quantum readiness checker for QoreChain accounts: reads the ML-DSA-87 key and EVM authorisation window over REST and says whether an EVM transaction would be admitted.",
   "scripts": {
     "deploy": "tsx --env-file=.env scripts/deploy.ts",
     "typecheck": "tsc --noEmit",
     "window": "tsx --env-file=.env scripts/window.ts",
     "check": "tsx --env-file=.env scripts/check.ts",
     "test": "tsx --test test/*.test.ts",
-    "balance": "node balance.mjs"
+    "balance": "node balance.mjs",
+    "verify": "node verify.mjs"
   },
   "dependencies": {
     "@cosmjs/stargate": "^0.39.0",
@@ -22,5 +23,10 @@
     "@types/node": "^22.7.5",
     "tsx": "^4.19.0",
     "typescript": "^5.6.3"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faduuuu1/qorechain-pq-check.git"
   }
 }
