@@ -29,10 +29,19 @@ contract PqcGate {
     /// @notice PQC key registration status precompile.
     /// @dev Lower-case because that is this address's EIP-55 checksummed form.
     ///      The SDK spells it with upper-case hex, which solc rejects.
-    address internal constant PQC_KEY_STATUS = 0x0000000000000000000000000000000000000a02;
+    ///
+    ///      `immutable` rather than `constant`, and the difference is only
+    ///      visible in the compiled output. Solidity folds a `constant` address
+    ///      this small to a two-byte `PUSH2 0x0a02`, so the precompile's address
+    ///      never appears in the deployed code and nothing reading the bytecode
+    ///      can tell which precompile is being called. An `immutable` is given a
+    ///      full 32-byte slot in the code instead, so the address is there in
+    ///      full, at the call site, where a disassembler or a dependency scanner
+    ///      can see it. The gas cost is identical: both are a push.
+    address public immutable PQC_KEY_STATUS = 0x0000000000000000000000000000000000000a02;
 
     /// @notice PQC signature verification precompile.
-    address internal constant PQC_VERIFY = 0x0000000000000000000000000000000000000a01;
+    address public immutable PQC_VERIFY = 0x0000000000000000000000000000000000000a01;
 
     /// @notice The precompiles this contract depends on, packed as two 20-byte
     ///         addresses: pqcVerify first, then pqcKeyStatus.
